@@ -1,51 +1,57 @@
-import logo from './logo.svg';
 import './App.css';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import FingerprintJS from '@fingerprintjs/fingerprintjs'
-import {useEffect} from "react";
+import {useEffect, useMemo, useState} from "react";
+import Item from "./Item";
 
 function App() {
+    const [items, setItems] = useState([])
+    const [wsConnected, setWsConnected] = useState(null)
+    const [visitorId, setVisitorId] = useState(null)
+    const wsBackendUrl = process.env.REACT_APP_WS_BACKEND_URL
+
+    const rws = useMemo(() => (new ReconnectingWebSocket(wsBackendUrl + '/ws')), [wsBackendUrl]);
+
     useEffect(() => {
-        const rws = new ReconnectingWebSocket('ws://localhost:8080/echo');
-        let timer = null
+        async function fetchItems() {
+            let res = await fetch("https://picsum.photos/v2/list");
+            const resItems = await res.json()
+            setItems(resItems);
+        }
+
+        fetchItems();
 
         rws.addEventListener('open', () => {
-            // Initialize an agent at application startup.
+            setWsConnected(true)
             const fpPromise = FingerprintJS.load();
             (async () => {
-                // Get the visitor identifier when you need it.
                 const fp = await fpPromise
                 const result = await fp.get()
 
-                // This is the visitor identifier:
-                const visitorId = result.visitorId
-                timer = setInterval(() => {
-                    rws.send('hello from ' + visitorId + '!')
-                }, 1000);
+                setVisitorId(result.visitorId)
             })()
         });
 
-        return () => {
-            if (timer) {
-                clearInterval(timer)
-            }
+    }, [rws]);
+
+    function trackHandler(item, state) {
+        if (wsConnected && visitorId) {
+            rws.send(JSON.stringify({
+                visitor: visitorId,
+                itemId: item.id,
+                state: state
+            }))
         }
-    }, []);
+    }
+
     return (
         <div className="App">
             <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo"/>
-                <p>
-                    Edit <code>src/App.js</code> and save to reload.
-                </p>
-                <a
-                    className="App-link"
-                    href="https://reactjs.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Learn React
-                </a>
+                {items.map((item) => {
+                    return (
+                        <Item key={item.id} item={item} trackHandler={trackHandler}/>
+                    )
+                })}
             </header>
         </div>
     );
