@@ -1,8 +1,5 @@
 .App {
   text-align: center;
-}
-
-.App-header {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -11,6 +8,10 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.App-container {
+  max-width: 960px;
 }
 
 .Item-container {
@@ -29,3 +30,13 @@
   right: 10px;
 }
 
+.App-intro {
+  margin: 10px 0;
+  padding: 10px;
+  color: #E5E7EB;
+  font-size: 1rem;
+}
+
+.App-intro a {
+  color: #F59E0B;
+}

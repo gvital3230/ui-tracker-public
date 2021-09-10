@@ -9,8 +9,9 @@ function App() {
     const [wsConnected, setWsConnected] = useState(null)
     const [visitorId, setVisitorId] = useState(null)
     const wsBackendUrl = process.env.REACT_APP_WS_BACKEND_URL
+    const dashboardUrl = process.env.REACT_APP_DASHBOARD_URL
 
-    const rws = useMemo(() => (new ReconnectingWebSocket(wsBackendUrl + '/ws')), [wsBackendUrl]);
+    const rws = useMemo(() => (new ReconnectingWebSocket(wsBackendUrl + '/ws-public')), [wsBackendUrl]);
 
     useEffect(() => {
         async function fetchItems() {
@@ -38,7 +39,7 @@ function App() {
         if (wsConnected && visitorId) {
             rws.send(JSON.stringify({
                 visitor: visitorId,
-                itemId: item.id,
+                item_id: item.id,
                 state: state
             }))
         }
@@ -46,13 +47,19 @@ function App() {
 
     return (
         <div className="App">
-            <header className="App-header">
+            <div className="App-container">
+                <div className="App-intro">
+                    <div>This is demo public app page. Open <a href={dashboardUrl} target="_blank" rel="noreferrer">dashboard</a> and then try to scroll images on this page. Dashboard will track your
+                        current active items. Also you can open current page in many browsers and see how it is looks like
+                    </div>
+
+                </div>
                 {items.map((item) => {
                     return (
                         <Item key={item.id} item={item} trackHandler={trackHandler}/>
                     )
                 })}
-            </header>
+            </div>
         </div>
     );
 }
