@@ -15,6 +15,8 @@ After some delay application tracks activity related to every product image and 
 * Repository location - (this one)
 * [Demo app](https://ui-tracker-public.herokuapp.com) - to see, how it works, it is recommended to open it from multiply different browsers or devices 
 
+![](public/howto.gif)
+
 ### Dashboard application
 
 Shows current active sessions and images that users are seeing right now
