@@ -1,4 +1,4 @@
-# Sample UI tracker application
+# Sample UI tracker application - Public App
 
 This is the part of sample UI tracker service, based on Websocket communication
 
